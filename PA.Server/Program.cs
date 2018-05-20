@@ -30,7 +30,7 @@ namespace PA.Server
 
         static void Main(string[] args)
         {
-            InitDb();
+            //InitDb();
             Console.Title = "Personal accounting server:2018";
             const int receiveTimeout = 60 * 100000;
             const int sendTimeout = 60 * 100000;
@@ -95,13 +95,13 @@ namespace PA.Server
                     var request = (RequestTypes)formatter.Deserialize(clientStream);
                     dispatchRequest(request, clientStream, formatter);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     //Console.WriteLine("Connection closed");
                     LoggerEvs.writeLog("Connection closed");
                     clients.Remove(clientId);
                     break;
-                }                
+                }
             }
         }
 
@@ -184,7 +184,7 @@ namespace PA.Server
                             context.SaveChanges();
 
                             formatter.Serialize(stream, ResponseTypes.Data);
-                            
+
                             LoggerEvs.writeLog("Department created");
                             break;
                         }
@@ -458,11 +458,11 @@ namespace PA.Server
                         try
                         {
                             var position = context.Positions
-                                .Where(x => x.Name == "Сотрудник")
+                                .Where(x => x.Name == newEmpModel.Position)
                                 .FirstOrDefault();
 
                             var dept = context.Departments
-                                .Where(x => x.Name == "Отдел продаж")
+                                .Where(x => x.Name == newEmpModel.Department)
                                 .FirstOrDefault();
 
                             var emp = new Employee
@@ -497,6 +497,73 @@ namespace PA.Server
                             Console.WriteLine(ex.Message);
                         }
                         break;
+                    case RequestTypes.CreatePayoutType:
+                        LoggerEvs.writeLog("Create payout type request");
+                        var newPayoutTypeModel = (PayoutTypeModel)formatter.Deserialize(stream);
+
+                        try
+                        {
+                            var payoutType = new PayoutType
+                            {
+                                Name = newPayoutTypeModel.Name
+                            };
+
+                            context.PayoutTypes.Add(payoutType);
+                            context.SaveChanges();
+
+                            formatter.Serialize(stream, ResponseTypes.Data);
+                            //formatter.Serialize(stream, new PayoutTypeModel
+                            //{
+                            //    Name = payoutType.Name,
+                            //    Id = payoutType.Id
+                            //});
+
+                            LoggerEvs.writeLog("Payout type created");
+                        }
+                        catch (Exception ex)
+                        {
+                            formatter.Serialize(stream, ResponseTypes.Error);
+                            formatter.Serialize(stream, ex.Message);
+                            Console.WriteLine(ex.Message);
+                        }
+                        break;
+                    case RequestTypes.EditPayoutType:
+                        {
+                            LoggerEvs.writeLog("Edit payout type");
+
+                            var payoutType = (PayoutTypeModel)formatter.Deserialize(stream);
+
+                            var pt = context.PayoutTypes
+                                .Where(x => x.Id == payoutType.Id)
+                                .FirstOrDefault();
+
+                            pt.Name = payoutType.Name;
+                            context.SaveChanges();
+
+                            formatter.Serialize(stream, ResponseTypes.Data);
+
+                            LoggerEvs.writeLog("Payout type updated");
+                            break;
+                        }
+                    case RequestTypes.RemovePayoutType:
+                        {
+                            LoggerEvs.writeLog("Remove payout type");
+
+                            var payoutTypeId = (int)formatter.Deserialize(stream);
+
+                            var payoutType = context.PayoutTypes
+                                .Where(x => x.Id == payoutTypeId)
+                                .FirstOrDefault();
+
+                            context.PayoutTypes.Remove(payoutType);
+
+                            context.SaveChanges();
+
+                            formatter.Serialize(stream, ResponseTypes.Data);
+
+                            LoggerEvs.writeLog("Payout type removed");
+                            break;
+                        }
                 }
             }
         }
