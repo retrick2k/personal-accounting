@@ -78,26 +78,37 @@
             this.Sum = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tpDeps = new System.Windows.Forms.TabPage();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.btnCreateDep = new System.Windows.Forms.Button();
             this.btnDeleteDep = new System.Windows.Forms.Button();
             this.btnUpdateDep = new System.Windows.Forms.Button();
             this.label11 = new System.Windows.Forms.Label();
             this.tbDepName = new System.Windows.Forms.TextBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.dgvDeps = new System.Windows.Forms.DataGridView();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
             this.DepId = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DepName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
+            this.btnCreatePosition = new System.Windows.Forms.Button();
             this.btnRemovePosition = new System.Windows.Forms.Button();
             this.btnSavePosition = new System.Windows.Forms.Button();
             this.label12 = new System.Windows.Forms.Label();
             this.tbPositionName = new System.Windows.Forms.TextBox();
             this.groupBox10 = new System.Windows.Forms.GroupBox();
             this.dgvPositions = new System.Windows.Forms.DataGridView();
-            this.btnCreateDep = new System.Windows.Forms.Button();
-            this.btnCreatePosition = new System.Windows.Forms.Button();
             this.PositionId = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.PositionName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.groupBox11 = new System.Windows.Forms.GroupBox();
+            this.btnCreatePayoutType = new System.Windows.Forms.Button();
+            this.btnRemovePayoutType = new System.Windows.Forms.Button();
+            this.btnSavePayoutType = new System.Windows.Forms.Button();
+            this.label13 = new System.Windows.Forms.Label();
+            this.tbPayoutTypeName = new System.Windows.Forms.TextBox();
+            this.groupBox12 = new System.Windows.Forms.GroupBox();
+            this.dgvPayoutTypes = new System.Windows.Forms.DataGridView();
+            this.PayoutTypeIdCell = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.PayoutTypeNameCell = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tpPayouts.SuspendLayout();
@@ -120,6 +131,10 @@
             this.groupBox9.SuspendLayout();
             this.groupBox10.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvPositions)).BeginInit();
+            this.tabPage3.SuspendLayout();
+            this.groupBox11.SuspendLayout();
+            this.groupBox12.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvPayoutTypes)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox3
@@ -194,6 +209,7 @@
             this.tpPayouts.Controls.Add(this.tabPage2);
             this.tpPayouts.Controls.Add(this.tpDeps);
             this.tpPayouts.Controls.Add(this.tabPage1);
+            this.tpPayouts.Controls.Add(this.tabPage3);
             this.tpPayouts.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tpPayouts.Location = new System.Drawing.Point(3, 16);
             this.tpPayouts.Name = "tpPayouts";
@@ -612,6 +628,16 @@
             this.groupBox8.TabIndex = 2;
             this.groupBox8.TabStop = false;
             // 
+            // btnCreateDep
+            // 
+            this.btnCreateDep.Location = new System.Drawing.Point(9, 38);
+            this.btnCreateDep.Name = "btnCreateDep";
+            this.btnCreateDep.Size = new System.Drawing.Size(364, 23);
+            this.btnCreateDep.TabIndex = 4;
+            this.btnCreateDep.Text = "Создать";
+            this.btnCreateDep.UseVisualStyleBackColor = true;
+            this.btnCreateDep.Click += new System.EventHandler(this.btnCreateDep_Click);
+            // 
             // btnDeleteDep
             // 
             this.btnDeleteDep.Location = new System.Drawing.Point(190, 67);
@@ -673,18 +699,6 @@
             this.dgvDeps.TabIndex = 0;
             this.dgvDeps.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvDeps_CellClick);
             // 
-            // tabPage1
-            // 
-            this.tabPage1.Controls.Add(this.groupBox9);
-            this.tabPage1.Controls.Add(this.groupBox10);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(855, 381);
-            this.tabPage1.TabIndex = 3;
-            this.tabPage1.Text = "Должности";
-            this.tabPage1.UseVisualStyleBackColor = true;
-            // 
             // DepId
             // 
             this.DepId.HeaderText = "Id";
@@ -696,6 +710,18 @@
             this.DepName.HeaderText = "Название отдела";
             this.DepName.Name = "DepName";
             this.DepName.ReadOnly = true;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.groupBox9);
+            this.tabPage1.Controls.Add(this.groupBox10);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(855, 381);
+            this.tabPage1.TabIndex = 3;
+            this.tabPage1.Text = "Должности";
+            this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // groupBox9
             // 
@@ -709,6 +735,16 @@
             this.groupBox9.Size = new System.Drawing.Size(379, 101);
             this.groupBox9.TabIndex = 4;
             this.groupBox9.TabStop = false;
+            // 
+            // btnCreatePosition
+            // 
+            this.btnCreatePosition.Location = new System.Drawing.Point(9, 42);
+            this.btnCreatePosition.Name = "btnCreatePosition";
+            this.btnCreatePosition.Size = new System.Drawing.Size(364, 23);
+            this.btnCreatePosition.TabIndex = 4;
+            this.btnCreatePosition.Text = "Создать";
+            this.btnCreatePosition.UseVisualStyleBackColor = true;
+            this.btnCreatePosition.Click += new System.EventHandler(this.btnCreatePosition_Click);
             // 
             // btnRemovePosition
             // 
@@ -771,26 +807,6 @@
             this.dgvPositions.TabIndex = 0;
             this.dgvPositions.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvPositions_CellClick);
             // 
-            // btnCreateDep
-            // 
-            this.btnCreateDep.Location = new System.Drawing.Point(9, 38);
-            this.btnCreateDep.Name = "btnCreateDep";
-            this.btnCreateDep.Size = new System.Drawing.Size(364, 23);
-            this.btnCreateDep.TabIndex = 4;
-            this.btnCreateDep.Text = "Создать";
-            this.btnCreateDep.UseVisualStyleBackColor = true;
-            this.btnCreateDep.Click += new System.EventHandler(this.btnCreateDep_Click);
-            // 
-            // btnCreatePosition
-            // 
-            this.btnCreatePosition.Location = new System.Drawing.Point(9, 42);
-            this.btnCreatePosition.Name = "btnCreatePosition";
-            this.btnCreatePosition.Size = new System.Drawing.Size(364, 23);
-            this.btnCreatePosition.TabIndex = 4;
-            this.btnCreatePosition.Text = "Создать";
-            this.btnCreatePosition.UseVisualStyleBackColor = true;
-            this.btnCreatePosition.Click += new System.EventHandler(this.btnCreatePosition_Click);
-            // 
             // PositionId
             // 
             this.PositionId.HeaderText = "Id";
@@ -802,6 +818,114 @@
             this.PositionName.HeaderText = "Должнотсь";
             this.PositionName.Name = "PositionName";
             this.PositionName.ReadOnly = true;
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.groupBox11);
+            this.tabPage3.Controls.Add(this.groupBox12);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(855, 381);
+            this.tabPage3.TabIndex = 4;
+            this.tabPage3.Text = "Типы выплат";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // groupBox11
+            // 
+            this.groupBox11.Controls.Add(this.btnCreatePayoutType);
+            this.groupBox11.Controls.Add(this.btnRemovePayoutType);
+            this.groupBox11.Controls.Add(this.btnSavePayoutType);
+            this.groupBox11.Controls.Add(this.label13);
+            this.groupBox11.Controls.Add(this.tbPayoutTypeName);
+            this.groupBox11.Location = new System.Drawing.Point(468, 6);
+            this.groupBox11.Name = "groupBox11";
+            this.groupBox11.Size = new System.Drawing.Size(379, 101);
+            this.groupBox11.TabIndex = 6;
+            this.groupBox11.TabStop = false;
+            // 
+            // btnCreatePayoutType
+            // 
+            this.btnCreatePayoutType.Location = new System.Drawing.Point(9, 42);
+            this.btnCreatePayoutType.Name = "btnCreatePayoutType";
+            this.btnCreatePayoutType.Size = new System.Drawing.Size(364, 23);
+            this.btnCreatePayoutType.TabIndex = 4;
+            this.btnCreatePayoutType.Text = "Создать";
+            this.btnCreatePayoutType.UseVisualStyleBackColor = true;
+            this.btnCreatePayoutType.Click += new System.EventHandler(this.btnCreatePayoutType_Click);
+            // 
+            // btnRemovePayoutType
+            // 
+            this.btnRemovePayoutType.Location = new System.Drawing.Point(190, 71);
+            this.btnRemovePayoutType.Name = "btnRemovePayoutType";
+            this.btnRemovePayoutType.Size = new System.Drawing.Size(183, 23);
+            this.btnRemovePayoutType.TabIndex = 3;
+            this.btnRemovePayoutType.Text = "Удалить";
+            this.btnRemovePayoutType.UseVisualStyleBackColor = true;
+            this.btnRemovePayoutType.Click += new System.EventHandler(this.btnRemovePayoutType_Click);
+            // 
+            // btnSavePayoutType
+            // 
+            this.btnSavePayoutType.Location = new System.Drawing.Point(6, 71);
+            this.btnSavePayoutType.Name = "btnSavePayoutType";
+            this.btnSavePayoutType.Size = new System.Drawing.Size(183, 23);
+            this.btnSavePayoutType.TabIndex = 2;
+            this.btnSavePayoutType.Text = "Сохранить";
+            this.btnSavePayoutType.UseVisualStyleBackColor = true;
+            this.btnSavePayoutType.Click += new System.EventHandler(this.btnSavePayoutType_Click);
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(6, 19);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(74, 13);
+            this.label13.TabIndex = 1;
+            this.label13.Text = "Тип выплаты";
+            // 
+            // tbPayoutTypeName
+            // 
+            this.tbPayoutTypeName.Location = new System.Drawing.Point(171, 16);
+            this.tbPayoutTypeName.Name = "tbPayoutTypeName";
+            this.tbPayoutTypeName.Size = new System.Drawing.Size(202, 20);
+            this.tbPayoutTypeName.TabIndex = 0;
+            // 
+            // groupBox12
+            // 
+            this.groupBox12.Controls.Add(this.dgvPayoutTypes);
+            this.groupBox12.Location = new System.Drawing.Point(7, 6);
+            this.groupBox12.Name = "groupBox12";
+            this.groupBox12.Size = new System.Drawing.Size(458, 369);
+            this.groupBox12.TabIndex = 5;
+            this.groupBox12.TabStop = false;
+            // 
+            // dgvPayoutTypes
+            // 
+            this.dgvPayoutTypes.AllowUserToAddRows = false;
+            this.dgvPayoutTypes.AllowUserToDeleteRows = false;
+            this.dgvPayoutTypes.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvPayoutTypes.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.PayoutTypeIdCell,
+            this.PayoutTypeNameCell});
+            this.dgvPayoutTypes.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvPayoutTypes.Location = new System.Drawing.Point(3, 16);
+            this.dgvPayoutTypes.Name = "dgvPayoutTypes";
+            this.dgvPayoutTypes.ReadOnly = true;
+            this.dgvPayoutTypes.Size = new System.Drawing.Size(452, 350);
+            this.dgvPayoutTypes.TabIndex = 0;
+            this.dgvPayoutTypes.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvPayoutTypes_CellClick);
+            // 
+            // PayoutTypeIdCell
+            // 
+            this.PayoutTypeIdCell.HeaderText = "Id";
+            this.PayoutTypeIdCell.Name = "PayoutTypeIdCell";
+            this.PayoutTypeIdCell.ReadOnly = true;
+            // 
+            // PayoutTypeNameCell
+            // 
+            this.PayoutTypeNameCell.HeaderText = "Тип выплаты";
+            this.PayoutTypeNameCell.Name = "PayoutTypeNameCell";
+            this.PayoutTypeNameCell.ReadOnly = true;
             // 
             // Form1
             // 
@@ -840,6 +964,11 @@
             this.groupBox9.PerformLayout();
             this.groupBox10.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvPositions)).EndInit();
+            this.tabPage3.ResumeLayout(false);
+            this.groupBox11.ResumeLayout(false);
+            this.groupBox11.PerformLayout();
+            this.groupBox12.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgvPayoutTypes)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -915,6 +1044,17 @@
         private System.Windows.Forms.Button btnCreatePosition;
         private System.Windows.Forms.DataGridViewTextBoxColumn PositionId;
         private System.Windows.Forms.DataGridViewTextBoxColumn PositionName;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.GroupBox groupBox11;
+        private System.Windows.Forms.Button btnCreatePayoutType;
+        private System.Windows.Forms.Button btnRemovePayoutType;
+        private System.Windows.Forms.Button btnSavePayoutType;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.TextBox tbPayoutTypeName;
+        private System.Windows.Forms.GroupBox groupBox12;
+        private System.Windows.Forms.DataGridView dgvPayoutTypes;
+        private System.Windows.Forms.DataGridViewTextBoxColumn PayoutTypeIdCell;
+        private System.Windows.Forms.DataGridViewTextBoxColumn PayoutTypeNameCell;
     }
 }
 

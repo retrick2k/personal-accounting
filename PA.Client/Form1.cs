@@ -23,12 +23,13 @@ namespace PA.Client
         private List<EmployeeModel> emps = new List<EmployeeModel>();
         private List<PositionModel> positions = new List<PositionModel>();
         private List<DepartmentModel> deps = new List<DepartmentModel>();
-        private List<PayoutTypeModel> payoutTyeps = new List<PayoutTypeModel>();
+        private List<PayoutTypeModel> payoutTypes = new List<PayoutTypeModel>();
         private List<PayoutModel> payouts = new List<PayoutModel>();        
         private int selectedEmpId = -1;        
         private int selectedPayoutId = -1;
         private int selectedDepId = -1;
         private int selectedPositionId = -1;
+        private int selectedPayoutTypeId = -1;
 
         public Form1()
         {
@@ -92,9 +93,26 @@ namespace PA.Client
             formatter.Serialize(stream, RequestTypes.GetPayoutTypes);
 
             ResponseTypes response = (ResponseTypes)formatter.Deserialize(stream);
-            payoutTyeps = (List<PayoutTypeModel>)formatter.Deserialize(stream);
+            payoutTypes = (List<PayoutTypeModel>)formatter.Deserialize(stream);
 
-            cbPayoutType.DataSource = payoutTyeps;
+            cbPayoutType.DataSource = payoutTypes;
+
+            // Заполнить grid с типами выплат
+            FillPayoutTypesGrid();
+        }
+
+        private void FillPayoutTypesGrid()
+        {
+            dgvPayoutTypes.Rows.Clear();
+            if (payoutTypes.Count > 0)
+            {
+                dgvPayoutTypes.RowCount = payoutTypes.Count;
+                for (int i = 0; i < dgvPayoutTypes.RowCount; i++)
+                {
+                    dgvPayoutTypes.Rows[i].Cells["PayoutTypeIdCell"].Value = payoutTypes[i].Id;
+                    dgvPayoutTypes.Rows[i].Cells["PayoutTypeNameCell"].Value = payoutTypes[i].Name;                    
+                }
+            }
         }
 
         /// <summary>
@@ -261,7 +279,9 @@ namespace PA.Client
             {
                 FirstName = tbFirstName.Text,
                 LastName = tbLastName.Text,
-                MiddleName = tbMiddleName.Text
+                MiddleName = tbMiddleName.Text,
+                Department = cbDepartments.Text,
+                Position = cbPositions.Text
             });
 
             // Проверить ответ
@@ -301,6 +321,7 @@ namespace PA.Client
             formatter.Deserialize(stream);
 
             GetEmpsFromServer(formatter, stream);
+            FillEmpsGrid();
         }
 
         private void btnAssignPayout_Click(object sender, EventArgs e)
@@ -527,6 +548,65 @@ namespace PA.Client
             var pos = positions.Where(x => x.Id == selectedPositionId).FirstOrDefault();
 
             tbPositionName.Text = pos.Name;
+        }
+
+        private void btnCreatePayoutType_Click(object sender, EventArgs e)
+        {
+            IFormatter formatter = new BinaryFormatter();
+            NetworkStream stream = currentClient.GetStream();
+
+            // Послать запрос на обновление отдела
+            formatter.Serialize(stream, RequestTypes.CreatePayoutType);
+
+            formatter.Serialize(stream, new PayoutTypeModel
+            {
+                Name = tbPayoutTypeName.Text
+            });
+
+            formatter.Deserialize(stream);
+            GetPayoutTypes(formatter, stream);
+        }
+
+        private void dgvPayoutTypes_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            selectedPayoutTypeId = (int)dgvPayoutTypes.Rows[e.RowIndex].Cells["PayoutTypeIdCell"].Value;
+
+            var payoutType = payoutTypes.Where(x => x.Id == selectedPayoutTypeId).FirstOrDefault();
+
+            tbPayoutTypeName.Text = payoutType.Name;
+        }
+
+        private void btnSavePayoutType_Click(object sender, EventArgs e)
+        {
+            IFormatter formatter = new BinaryFormatter();
+            NetworkStream stream = currentClient.GetStream();
+
+            // Послать запрос на обновление типа выплаты
+            formatter.Serialize(stream, RequestTypes.EditPayoutType);
+
+            formatter.Serialize(stream, new PayoutTypeModel
+            {
+                Id = selectedPayoutTypeId,
+                Name = tbPayoutTypeName.Text
+            });
+
+            formatter.Deserialize(stream);
+            GetPayoutTypes(formatter, stream);
+        }
+
+        private void btnRemovePayoutType_Click(object sender, EventArgs e)
+        {
+            IFormatter formatter = new BinaryFormatter();
+            NetworkStream stream = currentClient.GetStream();
+
+            // Послать запрос на удаление должности
+            formatter.Serialize(stream, RequestTypes.RemovePayoutType);
+
+            formatter.Serialize(stream, selectedPayoutTypeId);
+            selectedPayoutTypeId = -1;
+
+            formatter.Deserialize(stream);
+            GetPayoutTypes(formatter, stream);
         }
     }
 }
