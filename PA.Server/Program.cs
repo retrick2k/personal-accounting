@@ -3,6 +3,7 @@ using PA.Core.Models;
 using PA.Server.Common;
 using PA.Server.Db;
 using PA.Server.Db.Entities;
+using PA.Server.Db.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -106,10 +107,13 @@ namespace PA.Server
         }
 
         private static void dispatchRequest(RequestTypes request, NetworkStream stream, IFormatter formatter)
-        {
+        {            
             // TODO: Сделать блокировку через lock
             using (var context = new PaDbContext())
             {
+                var depsRepo = new DepartmentRepository(context);
+
+
                 switch (request)
                 {
                     case RequestTypes.EditPosition:
@@ -348,12 +352,21 @@ namespace PA.Server
                     case RequestTypes.GetDepartments:
                         LoggerEvs.writeLog("Get departments");
 
+                        /*
                         var deps = context.Departments.Select(x => new DepartmentModel
                         {
                             Id = x.Id,
                             Name = x.Name
                         })
-                        .ToList();
+                        .ToList();*/
+
+                        var deps = depsRepo.GetAll()
+                            .Select(x => new DepartmentModel
+                            {
+                                Id = x.Id,
+                                Name = x.Name
+                            })
+                            .ToList();
 
                         formatter.Serialize(stream, ResponseTypes.Data);
                         formatter.Serialize(stream, deps);
