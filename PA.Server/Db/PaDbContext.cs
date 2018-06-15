@@ -10,11 +10,11 @@ namespace PA.Server.Db
 {
     public class PaDbContext : DbContext
     {
-        public DbSet<PayoutType> PayoutTypes { get; set; }
-        public DbSet<Department> Departments { get; set; }
-        public DbSet<Employee> Employees { get; set; }
-        public DbSet<EmployeeStatusHistory> EmployeeStatusHistoryItems { get; set; }
-        public DbSet<Payout> Payouts { get; set; }
-        public DbSet<Position> Positions { get; set; }
+        public virtual DbSet<PayoutType> PayoutTypes { get; set; }
+        public virtual DbSet<Department> Departments { get; set; }
+        public virtual DbSet<Employee> Employees { get; set; }
+        public virtual DbSet<EmployeeStatusHistory> EmployeeStatusHistoryItems { get; set; }
+        public virtual DbSet<Payout> Payouts { get; set; }
+        public virtual DbSet<Position> Positions { get; set; }
     }
 }
