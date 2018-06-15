@@ -12,19 +12,26 @@ namespace PA.Core
         CreateEmp,
         EditEmp,
         FireEmp,
+
+        GetDepartments,
         GetDeps,
         CreateDep,
         RemoveDep,
+        EditDepartment,
+
+        GetPositions,
         EditPosition,
+        CreatePosition,
+        RemovePosition,
+
         CreatePayout,
         EditPayout,
         RemovePayout,
-        GetPositions,
-        GetDepartments,
-        GetPayoutTypes,
         GetPayouts,
-        CreatePosition,
-        RemovePosition,
-        EditDepartment
+
+        GetPayoutTypes,
+        CreatePayoutType,
+        EditPayoutType,
+        RemovePayoutType
     }
 }
