@@ -3,6 +3,7 @@ using PA.Core.Models;
 using PA.Server.Common;
 using PA.Server.Db;
 using PA.Server.Db.Entities;
+using PA.Server.Db.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -106,10 +107,13 @@ namespace PA.Server
         }
 
         private static void dispatchRequest(RequestTypes request, NetworkStream stream, IFormatter formatter)
-        {
+        {            
             // TODO: Сделать блокировку через lock
             using (var context = new PaDbContext())
             {
+                var depsRepo = new DepartmentRepository(context);
+
+
                 switch (request)
                 {
                     case RequestTypes.EditPosition:
@@ -175,13 +179,12 @@ namespace PA.Server
 
                             var depModel = (DepartmentModel)formatter.Deserialize(stream);
 
-                            context.Departments.Add(new Department
+                            depsRepo.Create(new Department
                             {
                                 EmployeeHeadId = -1,
                                 Name = depModel.Name,
                                 Situation = " "
                             });
-                            context.SaveChanges();
 
                             formatter.Serialize(stream, ResponseTypes.Data);
 
@@ -194,13 +197,15 @@ namespace PA.Server
 
                             var depModel = (DepartmentModel)formatter.Deserialize(stream);
 
-                            var dep = context.Departments
-                                .Where(x => x.Id == depModel.Id)
-                                .FirstOrDefault();
+                            var updates = new Department
+                            {
+                                EmployeeHeadId = -1,
+                                Id = depModel.Id,
+                                Name = depModel.Name,
+                                Situation = ""
+                            };
 
-                            dep.Name = depModel.Name;
-                            context.SaveChanges();
-
+                            depsRepo.Update(updates);
                             formatter.Serialize(stream, ResponseTypes.Data);
 
                             LoggerEvs.writeLog("Department updated");
@@ -212,12 +217,8 @@ namespace PA.Server
 
                             var depId = (int)formatter.Deserialize(stream);
 
-                            var dep = context.Departments
-                                .Where(x => x.Id == depId)
-                                .FirstOrDefault();
-
-                            context.Departments.Remove(dep);
-                            context.SaveChanges();
+                            var dep = depsRepo.Get(depId);
+                            depsRepo.Delete(dep);
 
                             formatter.Serialize(stream, ResponseTypes.Data);
 
@@ -348,12 +349,13 @@ namespace PA.Server
                     case RequestTypes.GetDepartments:
                         LoggerEvs.writeLog("Get departments");
 
-                        var deps = context.Departments.Select(x => new DepartmentModel
-                        {
-                            Id = x.Id,
-                            Name = x.Name
-                        })
-                        .ToList();
+                        var deps = depsRepo.GetAll()
+                            .Select(x => new DepartmentModel
+                            {
+                                Id = x.Id,
+                                Name = x.Name
+                            })
+                            .ToList();
 
                         formatter.Serialize(stream, ResponseTypes.Data);
                         formatter.Serialize(stream, deps);
