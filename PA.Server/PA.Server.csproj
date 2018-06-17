@@ -61,6 +61,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\Client.cs" />
+    <Compile Include="Common\Command.cs" />
+    <Compile Include="Common\DbCommand.cs" />
     <Compile Include="Db\Entities\Department.cs" />
     <Compile Include="Db\Entities\Employee.cs" />
     <Compile Include="Db\Entities\EmployeeStatusHistory.cs" />
