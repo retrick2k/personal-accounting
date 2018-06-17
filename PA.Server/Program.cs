@@ -42,7 +42,6 @@ namespace PA.Server
 
             TcpListener tcpListener = new TcpListener(IPAddress.Any, port);
             tcpListener.Start();
-            //Console.WriteLine($"Listening started on port: {port}");
             LoggerEvs.writeLog($"Listening started on port: {port}");
 
             TcpClient client;
@@ -51,7 +50,6 @@ namespace PA.Server
             while (true)
             {
                 client = tcpListener.AcceptTcpClient();
-                //Console.WriteLine("Client accepted! +1");
                 LoggerEvs.writeLog("New client accepted!");
 
                 client.SendTimeout = sendTimeout;
@@ -98,7 +96,6 @@ namespace PA.Server
                 }
                 catch (Exception ex)
                 {
-                    //Console.WriteLine("Connection closed");
                     LoggerEvs.writeLog("Connection closed");
                     clients.Remove(clientId);
                     break;
@@ -108,27 +105,26 @@ namespace PA.Server
 
         private static void dispatchRequest(RequestTypes request, NetworkStream stream, IFormatter formatter)
         {            
-            // TODO: Сделать блокировку через lock
             using (var context = new PaDbContext())
             {
                 var depsRepo = new DepartmentRepository(context);
-
+                var positionsRepo = new PositionRepository(context);
+                var empsRepo = new EmployeeRepository(context);
+                var payoutTypesRepo = new PayoutTypeRepository(context);
+                var payoutsRepo = new PayoutRepository(context);
 
                 switch (request)
                 {
                     case RequestTypes.EditPosition:
                         {
-                            //Console.WriteLine("Edit position");
                             LoggerEvs.writeLog("Edit position");
 
                             var posModel = (PositionModel)formatter.Deserialize(stream);
 
-                            var pos = context.Positions
-                                .Where(x => x.Id == posModel.Id)
-                                .FirstOrDefault();
+                            var pos = positionsRepo.Get(posModel.Id);
 
                             pos.Name = posModel.Name;
-                            context.SaveChanges();
+                            positionsRepo.Update(pos);
 
                             formatter.Serialize(stream, ResponseTypes.Data);
 
@@ -141,13 +137,8 @@ namespace PA.Server
 
                             var posId = (int)formatter.Deserialize(stream);
 
-                            var position = context.Positions
-                                .Where(x => x.Id == posId)
-                                .FirstOrDefault();
-
-                            context.Positions.Remove(position);
-
-                            context.SaveChanges();
+                            var position = positionsRepo.Get(posId);
+                            positionsRepo.Delete(position);
 
                             formatter.Serialize(stream, ResponseTypes.Data);
 
@@ -160,13 +151,11 @@ namespace PA.Server
 
                             var positionModel = (PositionModel)formatter.Deserialize(stream);
 
-                            context.Positions.Add(new Position
+                            positionsRepo.Create(new Position
                             {
                                 Name = positionModel.Name,
                                 Salary = 1
                             });
-
-                            context.SaveChanges();
 
                             formatter.Serialize(stream, ResponseTypes.Data);
 
@@ -231,13 +220,11 @@ namespace PA.Server
 
                             var payoutEditModel = (EditPayoutModel)formatter.Deserialize(stream);
 
-                            var payout = context.Payouts
-                                .Where(x => x.Id == payoutEditModel.PayoutId)
-                                .FirstOrDefault();
+                            var payout = payoutsRepo.Get(payoutEditModel.PayoutId);
 
                             payout.Sum = payoutEditModel.Sum;
 
-                            context.SaveChanges();
+                            payoutsRepo.Update(payout);
 
                             formatter.Serialize(stream, new PayoutModel
                             {
@@ -253,13 +240,8 @@ namespace PA.Server
                             LoggerEvs.writeLog("Remove payout");
 
                             var payoutId = (int)formatter.Deserialize(stream);
-
-                            var payout = context.Payouts
-                                .Where(x => x.Id == payoutId)
-                                .FirstOrDefault();
-
-                            context.Payouts.Remove(payout);
-                            context.SaveChanges();
+                            var payout = payoutsRepo.Get(payoutId);
+                            payoutsRepo.Delete(payout);
 
                             formatter.Serialize(stream, ResponseTypes.Data);
 
@@ -272,9 +254,9 @@ namespace PA.Server
 
                             var empId = (int)formatter.Deserialize(stream);
 
-                            var payouts = context.Payouts
+                            var payouts = payoutsRepo.GetAll()
                                 .Where(x => x.EmployeeId == empId)
-                                .Join(context.PayoutTypes, x => x.PayoutTypeId, y => y.Id, (x, y) => new PayoutModel
+                                .Join(payoutTypesRepo.GetAll(), x => x.PayoutTypeId, y => y.Id, (x, y) => new PayoutModel
                                 {
                                     Id = x.Id,
                                     PayoutType = y.Name,
@@ -291,7 +273,7 @@ namespace PA.Server
                         {
                             LoggerEvs.writeLog("Get payout types");
 
-                            var payoutTypes = context.PayoutTypes
+                            var payoutTypes = payoutTypesRepo.GetAll()
                                 .Select(x => new PayoutTypeModel
                                 {
                                     Id = x.Id,
@@ -311,15 +293,12 @@ namespace PA.Server
 
                             var assignPayout = (AssignPayoutModel)formatter.Deserialize(stream);
 
-                            var payout = new Payout()
+                            var payout = payoutsRepo.Create(new Payout()
                             {
                                 EmployeeId = assignPayout.EmployeeId,
                                 PayoutTypeId = assignPayout.PayoutTypeId,
                                 Sum = assignPayout.Sum
-                            };
-
-                            context.Payouts.Add(payout);
-                            context.SaveChanges();
+                            });
 
                             formatter.Serialize(stream, ResponseTypes.Data);
                             formatter.Serialize(stream, payout.Id);
@@ -333,12 +312,8 @@ namespace PA.Server
 
                             var empId = (int)formatter.Deserialize(stream);
 
-                            var emp = context.Employees
-                                .Where(x => x.Id == empId)
-                                .FirstOrDefault();
-
-                            context.Employees.Remove(emp);
-                            context.SaveChanges();
+                            var emp = empsRepo.Get(empId);
+                            empsRepo.Delete(emp);
 
                             formatter.Serialize(stream, ResponseTypes.Data);
                             formatter.Serialize(stream, empId);
@@ -365,7 +340,8 @@ namespace PA.Server
                     case RequestTypes.GetPositions:
                         LoggerEvs.writeLog("Get positions");
 
-                        var positions = context.Positions.Select(x => new PositionModel
+                        var positions = positionsRepo.GetAll()
+                        .Select(x => new PositionModel
                         {
                             Id = x.Id,
                             Name = x.Name
@@ -379,8 +355,8 @@ namespace PA.Server
                         break;
                     case RequestTypes.GetEmps:
                         LoggerEvs.writeLog("Get emps request");
-                        var emps = context.Employees
-                        .Join(context.Positions, x => x.PositionId, y => y.Id, (x, y) => new
+                        var emps = empsRepo.GetAll()
+                        .Join(positionsRepo.GetAll(), x => x.PositionId, y => y.Id, (x, y) => new
                         {
                             Id = x.Id,
                             FirstName = x.FirstName,
@@ -389,7 +365,7 @@ namespace PA.Server
                             Position = y.Name,
                             DepartmentId = x.DepartmentId
                         })
-                        .Join(context.Departments, x => x.DepartmentId, y => y.Id, (x, y) => new EmployeeModel
+                        .Join(depsRepo.GetAll(), x => x.DepartmentId, y => y.Id, (x, y) => new EmployeeModel
                         {
                             Department = y.Name,
                             Id = x.Id,
@@ -412,24 +388,19 @@ namespace PA.Server
 
                             try
                             {
-                                var position = context.Positions
-                                    .Where(x => x.Id == empFromRequuest.PositionId)
-                                    .FirstOrDefault();
+                                var position = positionsRepo.Get(empFromRequuest.PositionId);
 
-                                var dep = context.Departments
-                                    .Where(x => x.Id == empFromRequuest.DepartmentId)
-                                    .FirstOrDefault();
+                                var dep = depsRepo.Get(empFromRequuest.DepartmentId);
 
-                                var emp = context.Employees
-                                    .Where(x => x.Id == empFromRequuest.Id)
-                                    .FirstOrDefault();
+                                var emp = empsRepo.Get(empFromRequuest.Id);
+
                                 emp.LastName = empFromRequuest.LastName;
                                 emp.MiddleName = empFromRequuest.MiddleName;
                                 emp.FirstName = empFromRequuest.FirstName;
                                 emp.DepartmentId = dep.Id;
                                 emp.PositionId = position.Id;
 
-                                context.SaveChanges();
+                                empsRepo.Update(emp);
 
                                 formatter.Serialize(stream, ResponseTypes.Data);
 
@@ -459,11 +430,11 @@ namespace PA.Server
 
                         try
                         {
-                            var position = context.Positions
+                            var position = positionsRepo.GetAll()
                                 .Where(x => x.Name == newEmpModel.Position)
                                 .FirstOrDefault();
 
-                            var dept = context.Departments
+                            var dept = depsRepo.GetAll()
                                 .Where(x => x.Name == newEmpModel.Department)
                                 .FirstOrDefault();
 
@@ -476,8 +447,7 @@ namespace PA.Server
                                 DepartmentId = dept.Id
                             };
 
-                            context.Employees.Add(emp);
-                            context.SaveChanges();
+                            emp = empsRepo.Create(emp);
 
                             formatter.Serialize(stream, ResponseTypes.Data);
                             formatter.Serialize(stream, new EmployeeModel
@@ -505,20 +475,12 @@ namespace PA.Server
 
                         try
                         {
-                            var payoutType = new PayoutType
+                            payoutTypesRepo.Create(new PayoutType
                             {
                                 Name = newPayoutTypeModel.Name
-                            };
-
-                            context.PayoutTypes.Add(payoutType);
-                            context.SaveChanges();
+                            });
 
                             formatter.Serialize(stream, ResponseTypes.Data);
-                            //formatter.Serialize(stream, new PayoutTypeModel
-                            //{
-                            //    Name = payoutType.Name,
-                            //    Id = payoutType.Id
-                            //});
 
                             LoggerEvs.writeLog("Payout type created");
                         }
@@ -535,12 +497,11 @@ namespace PA.Server
 
                             var payoutType = (PayoutTypeModel)formatter.Deserialize(stream);
 
-                            var pt = context.PayoutTypes
-                                .Where(x => x.Id == payoutType.Id)
-                                .FirstOrDefault();
+                            var pt = payoutTypesRepo.Get(payoutType.Id);
 
                             pt.Name = payoutType.Name;
-                            context.SaveChanges();
+
+                            payoutTypesRepo.Update(pt);
 
                             formatter.Serialize(stream, ResponseTypes.Data);
 
@@ -553,13 +514,8 @@ namespace PA.Server
 
                             var payoutTypeId = (int)formatter.Deserialize(stream);
 
-                            var payoutType = context.PayoutTypes
-                                .Where(x => x.Id == payoutTypeId)
-                                .FirstOrDefault();
-
-                            context.PayoutTypes.Remove(payoutType);
-
-                            context.SaveChanges();
+                            var payoutType = payoutTypesRepo.Get(payoutTypeId);
+                            payoutTypesRepo.Delete(payoutType);
 
                             formatter.Serialize(stream, ResponseTypes.Data);
 

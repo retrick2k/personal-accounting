@@ -69,6 +69,10 @@
     <Compile Include="Db\Entities\Position.cs" />
     <Compile Include="Db\PaDbContext.cs" />
     <Compile Include="Db\Repositories\DepartmentRepository.cs" />
+    <Compile Include="Db\Repositories\EmployeeRepository.cs" />
+    <Compile Include="Db\Repositories\PayoutRepository.cs" />
+    <Compile Include="Db\Repositories\PayoutTypeRepository.cs" />
+    <Compile Include="Db\Repositories\PositionRepository.cs" />
     <Compile Include="Db\Repository.cs" />
     <Compile Include="LoggerEvs.cs" />
     <Compile Include="Program.cs" />
