@@ -534,7 +534,7 @@ namespace PA.Client
             formatter.Serialize(stream, new PositionModel
             {
                 Id = selectedPositionId,
-                Name = tbDepName.Text
+                Name = tbPositionName.Text
             });
 
             formatter.Deserialize(stream);
