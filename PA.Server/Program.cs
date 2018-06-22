@@ -96,7 +96,7 @@ namespace PA.Server
                 {
                     var request = (RequestTypes)formatter.Deserialize(clientStream);
 
-                    var command = new DbCommand(context, request, clientStream);
+                    Command command = new DbCommand(context, request, clientStream);
                     command.Execute();
                 }
                 catch (Exception ex)
